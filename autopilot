@@ -1,0 +1,239 @@
+-- Autpilot Commands for the CRJ200 AutoPilot
+
+-- Included in panel for version < 4.0
+
+ 
+
+crs = 0
+
+heading = 0
+
+speed = 0
+
+alt = 0
+
+
+ 
+
+-- LED output for AutoPilot lights
+ap_fd_light = hw_output_add("AP Flight Director", false)
+ap_eng_light = hw_output_add("AP Engage light", false)
+ap_xfr_light = hw_output_add("AP XFR Light", false)
+ap_turb_light = hw_output_add("AP TURB light", false)
+ap_spd_light = hw_output_add("AP Speed light", false)
+ap_appr_light = hw_output_add("AP APPR light", false)
+ap_bcrs_light = hw_output_add("AP BC light", false)
+ap_hdg_light = hw_output_add("AP Heading light", false)
+ap_nav_light = hw_output_add("AP Nav light", false)
+ap_bank_light = hw_output_add("AP Bank light", false)
+ap_alt_light = hw_output_add("AP ALT light", false)
+ap_vs_light = hw_output_add("AP VS light", false)
+-- End of AP LED outs
+
+
+--Autopilot knobs
+
+ 
+
+function update_crs(course)
+    crs = course
+end
+
+function update_speed(spd)
+    speed = spd
+end
+
+function update_hdg(hdg)
+    heading =  hdg
+end
+
+function update_alt (altitude)
+    alt = altitude
+end
+
+
+-- Subscribe to Rotary knobs in AutoPilot
+
+xpl_dataref_subscribe("CRJ/autopilot/crs1","INT",update_crs)
+xpl_dataref_subscribe("CRJ/autopilot/speed","INT",update_speed)
+xpl_dataref_subscribe("CRJ/autopilot/hdg","INT",update_hdg)
+xpl_dataref_subscribe("CRJ/autopilot/alt","INT",update_alt)
+
+
+-- Autpilot Dials (Rotary Encoders) CRS1, Speed, HDG, ALT, VSI
+
+
+hw_dial_add("AP Course", function(direction)
+          xpl_dataref_write("CRJ/autopilot/crs1","INT",crs + direction)
+end)
+
+hw_dial_add("AP Heading", function(direction)
+      xpl_dataref_write("CRJ/autopilot/hdg","INT",heading + direction)
+end)
+
+
+ 
+
+-- Autopilot Buttons FS, AP Engage,XFR,TURB, Speed,HDG, APPR,B/C,1/2 bank, NAV, ALT, VS
+
+hw_button_add("AP Flight Director", function() 
+        xpl_dataref_write("CRJ/autopilot/fd_button","INT",1)
+end)
+
+hw_button_add("AP Engage Button ", function() 
+        xpl_dataref_write("CRJ/autopilot/ap_eng_button","INT",1)
+end)
+
+hw_button_add("AP Disconnect Button ", function() 
+        xpl_dataref_write("CRJ/autopilot/ap_disc_button","INT",1)
+end)
+
+hw_button_add("AP Speed", function() 
+       xpl_dataref_write("CRJ/autopilot/speed_button","INT",1)
+end)
+
+hw_button_add("AP Heading", function() 
+        xpl_dataref_write("CRJ/autopilot/hdg_button","INT",1)
+end)
+
+hw_button_add("AP Altitude Button", function() 
+        xpl_dataref_write("CRJ/autopilot/alt_button","INT",1)
+end)
+
+hw_button_add("AP Vertical Speed", function() 
+        xpl_dataref_write("CRJ/autopilot/v_button","INT",1)
+end)
+
+hw_button_add("AP Nav Button", function() 
+        xpl_dataref_write("CRJ/autopilot/nav_button","INT",1)
+end)
+hw_button_add("AP HalfBank Button", function() 
+        xpl_dataref_write("CRJ/autopilot/12_bank_button","INT",1)
+end)
+hw_button_add("AP Back Course Button", function() 
+        xpl_dataref_write("CRJ/autopilot/backcrs_button","INT",1)
+end)
+hw_button_add("AP toga Button", function() 
+        xpl_dataref_write("CRJ/autopilot/toga_button","INT",1)
+end)
+hw_button_add("AP XFR Button", function() 
+        xpl_dataref_write("CRJ/autopilot/xpr_button","INT",1)
+end)
+hw_button_add("AP Turbo Button", function() 
+        xpl_dataref_write("CRJ/autopilot/turbo_button","INT",1)
+end)
+hw_button_add("AP Appr Button", function() 
+        xpl_dataref_write("CRJ/autopilot/appr_button","INT",1)
+end)
+
+-- Autopilot Lights
+
+xpl_dataref_subscribe("CRJ/autopilot/fd_light","INT", function(state)   
+    if state ==1  then     
+        hw_output_set(ap_FD_light, true)
+    else
+         hw_output_set(ap_FD_light, false)
+    end
+end)
+
+
+
+xpl_dataref_subscribe("CRJ/autopilot/turb_light","INT", function(state)   
+    if state ==1  then     
+        hw_output_set(ap_TURB_light, true)
+    else
+         hw_output_set(ap_TURB_light, false)
+    end
+end)
+
+
+xpl_dataref_subscribe("CRJ/autopilot/bcrs_light","INT", function(state)
+
+    if state == 1 then
+        hw_output_set(ap_BC_light, true)
+
+    else
+
+    hw_output_set(ap_BC_light, false)
+
+    end
+
+end)
+
+              
+
+xpl_dataref_subscribe("CRJ/autopilot/ap_eng_light","INT", function(state)
+
+  
+
+    if state == 1 then
+
+        hw_output_set(ap_eng_light, true)
+
+    else
+
+        hw_output_set(ap_eng_light, false)
+
+    end
+
+end)
+
+
+xpl_dataref_subscribe("CRJ/autopilot/xpr_light","INT", function(state)
+   if state ==1  then
+        hw_output_set(ap_XFR_light, true)
+    else
+        hw_output_set(ap_XFR_light, false)
+    end
+end)
+
+xpl_dataref_subscribe("CRJ/autopilot/hdg_light","INT", function(state)
+   if state ==1  then
+        hw_output_set(ap_hdg_light, true)
+    else
+        hw_output_set(ap_hdg_light, false)
+    end
+end)
+
+xpl_dataref_subscribe("CRJ/autopilot/nav_light","INT", function(state)
+   if state ==1  then
+        hw_output_set(ap_nav_light, true)
+    else
+        hw_output_set(ap_nav_light, false)
+    end
+end)
+xpl_dataref_subscribe("CRJ/autopilot/alt_light","INT", function(state)
+   if state ==1  then
+        hw_output_set(ap_alt_light, true)
+    else
+        hw_output_set(ap_alt_light, false)
+    end
+end)
+ xpl_dataref_subscribe("CRJ/autopilot/spd_light","INT", function(state)
+   if state ==1  then
+        hw_output_set(ap_spd_light, true)
+    else
+        hw_output_set(ap_spd_light, false)
+    end
+end)
+xpl_dataref_subscribe("CRJ/autopilot/vs_light","INT", function(state)
+   if state ==1  then
+        hw_output_set(ap_vs_light, true)
+    else
+        hw_output_set(ap_vs_light, false)
+    end
+end)
+xpl_dataref_subscribe("CRJ/autopilot/bank_light","INT", function(state)
+   if state ==1  then
+        hw_output_set(ap_bank_light, true)
+    else
+        hw_output_set(ap_bank_light, false)
+    end
+end)
+xpl_dataref_subscribe("CRJ/autopilot/appr_light","INT", function(state)
+   if state ==1  then
+        hw_output_set(ap_appr_light, true)
+    else
+        hw_output_set(ap_appr_light, false)
+    end
+end)
